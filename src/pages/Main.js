@@ -5,7 +5,6 @@ import io from 'socket.io-client'
 import Like from '../assets/like.png'
 import Deslike from '../assets/dislike.png'
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import AsyncStorage from '@react-native-community/async-storage'
 import api from '../services/api'
 import matchImage from '../assets/itsamatch.png'
 
@@ -72,7 +71,9 @@ export default function Main({ navigation }) {
 
     return (
         <SafeAreaView style={styles.container}>
-            <View />
+            <TouchableOpacity >
+                <Image style={styles.logo} source={Logo}/>
+            </TouchableOpacity>
             <View style={styles.cardContiner}>
                 {users.length === 0
                     ? <Text style={styles.empty}>Acabou :(</Text>
@@ -125,7 +126,7 @@ const styles = StyleSheet.create({
         flex: 1,
         alignSelf: 'stretch',
         justifyContent: 'center',
-        maxHeight: 500,
+        maxHeight: 550,
     },
 
     text:{

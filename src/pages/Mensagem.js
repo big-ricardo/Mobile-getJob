@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { KeyboardAvoidingView, StyleSheet, View, TextInput, Text, TouchableOpacity, Platform, FlatList } from 'react-native'
+import { SafeAreaView, StyleSheet, View, TextInput, Text, TouchableOpacity, Platform, FlatList, Image } from 'react-native'
 import Logo from '../assets/logoGet.png'
 import io from 'socket.io-client'
 import api from '../services/api'
@@ -30,7 +30,7 @@ export default function Login({ navigation }) {
             setTIdarget(vaga)
             async function carregaUser() {
                 const emp = await api.get('/vagLog', {
-                    headers: { user:vaga }
+                    headers: { user: vaga }
                 })
                 setTarget(emp.data)
             }
@@ -68,28 +68,34 @@ export default function Login({ navigation }) {
 
 
     return (
-
-        <KeyboardAvoidingView style={styles.container} enabled={Platform.OS == 'ios'}>
-                <View style={styles.message_container}>
+        <SafeAreaView style={styles.container} enabled={Platform.OS == 'ios'}>
+            <View style={styles.message_container}>
+            <View style={styles.perfil}>
+                <Image style={styles.avatar} source={{ uri: targetUser.avatar }} />
+                <Text style={styles.name}>{targetUser.user}</Text>
+            </View>
+                <View style={styles.lista}>
                     <FlatList
-                    data={messagens}
-                    keyExtractor={post => String(post._id)} 
-                    renderItem={({ item }) => (
-                        <View>
+                        data={messagens.reverse()}
+                        inverted
+                        keyExtractor={post => String(post._id)}
+                        renderItem={({ item }) => (
+                            <View>
                                 {item.id === idloggedUser ? (
-                                    <View style={styles.loggedUser}><View style={styles.messageE}><Text>{loggedUser.user}</Text><Text>{item.message}</Text></View></View>
+                                    <View style={styles.loggedUser}><View style={styles.messageE}><Text style={styles.text}>{loggedUser.user}</Text><Text style={styles.textN}>{item.message}</Text></View></View>
                                 ) : (
-                                    <View style={styles.targetUser}><View style={styles.messageR}><Text>{targetUser.user}</Text><Text style={{marginLeft: 30}}>{item.message}</Text></View></View>
+                                        <View style={styles.targetUser}><View style={styles.messageR}><Text style={styles.text}>{targetUser.user}</Text><Text style={styles.textN} style={{ marginLeft: 20 }}>{item.message}</Text></View></View>
                                     )}
                             </View>
-                    )}
+                        )}
                     />
                 </View>
-            <View style={styles.inputs}>
-                <TextInput value={message} onChangeText={setMessage} placeholder="Digite seu usuario do GitHub" autoCapitalize='none' autoCorrect={false} placeholderTextColor="#999" style={styles.input} />
-                <TouchableOpacity onPress={handleSubmit} style={styles.button}><Text style={styles.buttonText}>Entrar</Text></TouchableOpacity>
             </View>
-        </KeyboardAvoidingView>
+            <View style={styles.inputs}>
+                <TextInput value={message} onChangeText={setMessage} placeholder="Digite sua Mensagem" autoCapitalize='none' autoCorrect={false} placeholderTextColor="#999" style={styles.input} />
+                <TouchableOpacity onPress={handleSubmit} style={styles.button}><Text style={styles.buttonText}>Enviar</Text></TouchableOpacity>
+            </View>
+        </SafeAreaView>
 
     );
 }
@@ -97,17 +103,27 @@ export default function Login({ navigation }) {
 const styles = StyleSheet.create({
 
     message_container: {
-        height: '90%'
+        flex: 1,
+        height: 'auto'
     },
 
     container: {
         flex: 1,
         backgroundColor: '#f5f5f5',
-        height: '100%'
+        justifyContent: 'space-between',
     },
 
     inputs: {
-        flexDirection: 'row'
+        flexDirection: 'row',
+        marginBottom: 3
+    },
+
+    lista:{
+        position: 'absolute',
+        top: 61,
+        bottom: 0,
+        left: 0,
+        right: 1
     },
 
     input: {
@@ -118,14 +134,13 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: "#ddd",
         borderRadius: 4,
-        paddingHorizontal: 15,
     },
 
     button: {
         height: 46,
         backgroundColor: "#df4723",
         borderRadius: 4,
-        width: '12%',
+        width: '14%',
         justifyContent: 'center',
         alignItems: 'center',
     },
@@ -149,7 +164,7 @@ const styles = StyleSheet.create({
         alignItems: 'flex-end',
         paddingHorizontal: 10,
         marginTop: 10,
-        marginBottom: 5,
+        marginBottom: 6,
         height: 'auto',
         backgroundColor: '#e1ffc7',
         width: '60%',
@@ -157,13 +172,13 @@ const styles = StyleSheet.create({
         height: 'auto',
     },
 
-    targetUser:{
+    targetUser: {
         borderBottomLeftRadius: 50,
         borderBottomRightRadius: 25,
         borderTopRightRadius: 50,
         marginLeft: 5,
-        marginTop: 10,
         marginTop: 8,
+        marginBottom: 6,
         alignItems: 'stretch',
         paddingHorizontal: 10,
         width: '60%',
@@ -174,14 +189,54 @@ const styles = StyleSheet.create({
         marginBottom: 5,
     },
 
-    messageE:{
+    messageE: {
         flexDirection: "column",
         alignItems: 'flex-end',
         width: "85%",
         height: 'auto',
         backgroundColor: '#e1ffc7',
         marginRight: 20,
-        padding:5,
+        padding: 5,
+    },
+
+    perfil: {
+        width: "100%",
+        height: 61,
+        maxHeight: 61,
+        minHeight: 61,
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: '#df4723',
+        flexDirection: 'row',
+        borderWidth: 3,
+        borderColor: 'black',
+        zIndex: 1,
+    },
+
+    avatar: {
+        width: 50,
+        height: 50,
+        borderRadius: 80,
+        borderWidth: 3,
+        borderColor: '#fff',
+    },
+
+    name: {
+        fontWeight: 'bold',
+        fontSize: 16,
+        color: "#fff",
+        marginLeft: 10,
+    },
+
+    text: {
+        fontWeight: 'bold',
+        color: "#000000"
+    },
+
+    textN: {
+        fontWeight: "900",
+        color: '#1c1c1c',
     }
 
 });

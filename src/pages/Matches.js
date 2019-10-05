@@ -9,6 +9,7 @@ export default function Matchs({ navigation }) {
     const [users, setUsers] = useState([]);
     const id = navigation.getParam('user')
     const [pagina, setPg] = useState(1);
+    const [atu, setAtu] = useState(1);
 
     async function loadPage() {
         AsyncStorage.getItem('user').then(user => {
@@ -24,6 +25,7 @@ export default function Matchs({ navigation }) {
 
     }
 
+
     useEffect(() => {
         loadPage()
     }, [id])
@@ -37,7 +39,7 @@ export default function Matchs({ navigation }) {
 
     return (
         <SafeAreaView style={styles.container}>
-            <TouchableOpacity >
+            <TouchableOpacity>
                 <Image style={styles.logo} source={Logo} />
             </TouchableOpacity>
             <View style={styles.lista}>
