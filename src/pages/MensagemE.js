@@ -61,7 +61,7 @@ export default function Login({ navigation }) {
         })
         socket.on('message', messageRecebida => {
             mss.push(messageRecebida)
-            setMessagens([...mss])
+            setMessagens([...mss.slice(0).reverse()])
         })
 
     }, [idloggedUser])
@@ -77,9 +77,9 @@ export default function Login({ navigation }) {
             </View>
                 <View style={styles.lista}>
                     <FlatList
-                        data={messagens.reverse()}
+                        data={messagens}
                         inverted
-                        keyExtractor={post => String(post._id)}
+                        keyExtractor={post => String(post.message)}
                         renderItem={({ item }) => (
                             <View>
                                 {item.id === idloggedUser ? (

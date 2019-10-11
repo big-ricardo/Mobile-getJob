@@ -9,7 +9,7 @@ export default function Matchs({ navigation }) {
     const [users, setUsers] = useState([]);
     const id = navigation.getParam('user')
     const [pagina, setPg] = useState(1);
-    const [atu, setAtu] = useState(1);
+    const [refresh, setRefresh] = useState(false);
 
     async function loadPage() {
         AsyncStorage.getItem('user').then(user => {
@@ -25,10 +25,28 @@ export default function Matchs({ navigation }) {
 
     }
 
+    async function recarregar() {
+        AsyncStorage.getItem('user').then(user => {
+            async function atualiza() {
+                const response = await api.get(`/matchs?pg=1&vs=10`, {
+                    headers: { user }
+                })
+                setUsers(response.data)
+                console.log(response.data)
+                setRefresh(false)
+            }
+            atualiza()
+        })
+    }
 
     useEffect(() => {
         loadPage()
     }, [id])
+
+    async function handleRefresh() {
+        setRefresh(true)
+        recarregar()
+    }
 
     async function handleVaga(_id) {
 
@@ -39,7 +57,7 @@ export default function Matchs({ navigation }) {
 
     return (
         <SafeAreaView style={styles.container}>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={recarregar}>
                 <Image style={styles.logo} source={Logo} />
             </TouchableOpacity>
             <View style={styles.lista}>
@@ -48,6 +66,8 @@ export default function Matchs({ navigation }) {
                     onEndReached={() => loadPage()}
                     onEndReachedThreshold={0.1}
                     keyExtractor={post => String(post._id)}
+                    refreshing={refresh}
+                    onRefresh={() => handleRefresh()}
                     renderItem={({ item }) => (
                         <TouchableOpacity onPress={() => handleVaga(item._id)}>
                             <View style={styles.conatinerVag}>

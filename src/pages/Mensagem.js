@@ -12,7 +12,7 @@ export default function Login({ navigation }) {
     const [targetUser, setTarget] = useState({})
     const [idloggedUser, setIdLogged] = useState('')
     const [idtargetUser, setTIdarget] = useState('')
-    let mss = []
+    let mss= []
 
     async function loadUsers() {
         AsyncStorage.getItem('user').then(user => {
@@ -61,7 +61,7 @@ export default function Login({ navigation }) {
         })
         socket.on('message', messageRecebida => {
             mss.push(messageRecebida)
-            setMessagens([...mss])
+            setMessagens([...mss.slice(0).reverse()])
         })
 
     }, [idloggedUser])
@@ -76,9 +76,9 @@ export default function Login({ navigation }) {
             </View>
                 <View style={styles.lista}>
                     <FlatList
-                        data={messagens.reverse()}
+                        data={messagens}
                         inverted
-                        keyExtractor={post => String(post._id)}
+                        keyExtractor={item => String(item.message)}
                         renderItem={({ item }) => (
                             <View>
                                 {item.id === idloggedUser ? (

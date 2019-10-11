@@ -9,11 +9,12 @@ export default function Matchs({ navigation }) {
     const [users, setUsers] = useState([]);
     const id = navigation.getParam('user')
     const [pagina, setPg] = useState(1);
+    const [refresh, setRefresh] = useState(false);
 
     async function loadPage(){
         AsyncStorage.getItem('vagaId').then(user => {
             async function carregaUser() {
-                const response = await api.get(`/matcs?pg=${pagina}&vs=6`, {
+                const response = await api.get(`/matcs?pg=${pagina}&vs=10`, {
                     headers: { user }
                 })
                 setUsers([...users, ...response.data])
@@ -27,6 +28,25 @@ export default function Matchs({ navigation }) {
     useEffect(() => {
         loadPage()
     }, [id])
+
+    async function recarregar() {
+        AsyncStorage.getItem('vagaId').then(user => {
+            async function atualiza() {
+                const response = await api.get(`/matcs?pg=1&vs=10`, {
+                    headers: { user }
+                })
+                setUsers(response.data)
+                console.log(response.data)
+                setRefresh(false)
+            }
+            atualiza()
+        })
+    }
+
+    async function handleRefresh() {
+        setRefresh(true)
+        recarregar()
+    }
 
     async function handleVaga(_id) {
 
@@ -46,6 +66,8 @@ export default function Matchs({ navigation }) {
                     onEndReached={() => loadPage()}
                     onEndReachedThreshold={0.1}
                     keyExtractor={post => String(post._id)}
+                    refreshing={refresh}
+                    onRefresh={() => handleRefresh()}
                     renderItem={({ item }) => (
                         <TouchableOpacity onPress={() => handleVaga(item._id)}>
                         <View style={styles.conatinerVag}>

@@ -10,6 +10,7 @@ export default function Main({ navigation }) {
     const id = navigation.getParam('user')
     const [users, setUsers] = useState([]);
     const [pagina, setPg] = useState(1);
+    const [refresh, setRefresh] = useState(false);
 
     useEffect(() => {
         loadUsers();
@@ -30,6 +31,25 @@ export default function Main({ navigation }) {
         navigation.navigate('infoVaga', { user: _id }) 
     }
 
+    async function recarregar() {
+        AsyncStorage.getItem('userEmp').then(user => {
+            async function atualiza() {
+                const response = await api.get(`/emps?pg=1&vs=5`, {
+                    headers: { user }
+                })
+                setUsers(response.data)
+                console.log(response.data)
+                setRefresh(false)
+            }
+            atualiza()
+        })
+    }
+
+    async function handleRefresh() {
+        setRefresh(true)
+        recarregar()
+    }
+
     return (
         <SafeAreaView style={styles.container}>
             <TouchableOpacity >
@@ -42,6 +62,8 @@ export default function Main({ navigation }) {
                     onEndReachedThreshold={0.1}
                     numColumns={1}
                     keyExtractor={post => String(post._id)}
+                    refreshing={refresh}
+                    onRefresh={() => handleRefresh()}
                     renderItem={({ item }) => (
                         <TouchableOpacity onPress={() => handleVaga(item._id)}>
                             <View style={styles.conatinerVag}>
