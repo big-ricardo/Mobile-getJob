@@ -86,7 +86,7 @@ export default function Main({ navigation }) {
 
             {matchdev && (
                 <View style={styles.macthContainer}>
-                    <Image source={matchImage} />
+                    <Image style={styles.matchImage} source={matchImage} />
                     <Image style={styles.macthAvatar} source={{ uri: matchdev.avatar }} />
                     <Text style={styles.macthName}>{matchdev.name}</Text>
                     <Text style={styles.matchBio}>{matchdev.bio}</Text>
@@ -147,6 +147,10 @@ const styles = StyleSheet.create({
         left: 0,
         right: 0,
         bottom: 0,
+    },
+
+    matchImage:{
+        width: "100%",
     },
 
     avatar: {

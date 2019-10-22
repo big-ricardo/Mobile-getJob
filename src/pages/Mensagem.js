@@ -12,7 +12,8 @@ export default function Login({ navigation }) {
     const [targetUser, setTarget] = useState({})
     const [idloggedUser, setIdLogged] = useState('')
     const [idtargetUser, setTIdarget] = useState('')
-    let mss= []
+    const [flatlist,setFlat] = useState(null)
+    let mss = []
 
     async function loadUsers() {
         AsyncStorage.getItem('user').then(user => {
@@ -61,7 +62,7 @@ export default function Login({ navigation }) {
         })
         socket.on('message', messageRecebida => {
             mss.push(messageRecebida)
-            setMessagens([...mss.slice(0).reverse()])
+            setMessagens([...mss])
         })
 
     }, [idloggedUser])
@@ -70,15 +71,16 @@ export default function Login({ navigation }) {
     return (
         <SafeAreaView style={styles.container} enabled={Platform.OS == 'ios'}>
             <View style={styles.message_container}>
-            <View style={styles.perfil}>
-                <Image style={styles.avatar} source={{ uri: targetUser.avatar }} />
-                <Text style={styles.name}>{targetUser.user}</Text>
-            </View>
+                <View style={styles.perfil}>
+                    <Image style={styles.avatar} source={{ uri: targetUser.avatar }} />
+                    <Text style={styles.name}>{targetUser.user}</Text>
+                </View>
                 <View style={styles.lista}>
                     <FlatList
+                        ref={ ref => setFlat(ref)}
                         data={messagens}
-                        inverted
-                        keyExtractor={item => String(item.message)}
+                        keyExtractor={post => String(post.message)}
+                        onContentSizeChange={() => flatlist.scrollToEnd({ animated: true})}
                         renderItem={({ item }) => (
                             <View>
                                 {item.id === idloggedUser ? (
@@ -118,7 +120,7 @@ const styles = StyleSheet.create({
         marginBottom: 3
     },
 
-    lista:{
+    lista: {
         position: 'absolute',
         top: 61,
         bottom: 0,

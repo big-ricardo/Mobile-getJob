@@ -58,7 +58,7 @@ export default function Login({ navigation }) {
         <KeyboardAvoidingView style={styles.container} enabled={Platform.OS == 'ios'}>
             <Image source={Logo} />
             <TextInput value={user} onChangeText={setUser} placeholder="Digite seu usuario do GitHub" autoCapitalize='none' autoCorrect={false} placeholderTextColor="#999" style={styles.input} />
-            <TextInput value={password} secureTextEntry={true} onChangeText={setPassword} placeholder="Digite sua" autoCapitalize='none' autoCorrect={false} placeholderTextColor="#999" style={styles.input} />
+            <TextInput value={password} secureTextEntry={true} onChangeText={setPassword} placeholder="Digite sua Senha" autoCapitalize='none' autoCorrect={false} placeholderTextColor="#999" style={styles.input} />
             <TouchableOpacity onPress={handleLogin} style={styles.button}><Text style={styles.buttonText}>Entrar</Text></TouchableOpacity>
         </KeyboardAvoidingView>
 

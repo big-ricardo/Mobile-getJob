@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import { SafeAreaView, StyleSheet, View,Image, TextInput, Text, TouchableOpacity, Platform, FlatList } from 'react-native'
-import Logo from '../assets/logoGet.png'
 import io from 'socket.io-client'
 import api from '../services/api'
 import AsyncStorage from '@react-native-community/async-storage'
@@ -12,6 +11,7 @@ export default function Login({ navigation }) {
     const [targetUser, setTarget] = useState({})
     const [idloggedUser, setIdLogged] = useState('')
     const [idtargetUser, setTIdarget] = useState('')
+    const [flatlist,setFlat] = useState(null)
     let mss = []
 
     async function loadUsers() {
@@ -61,7 +61,7 @@ export default function Login({ navigation }) {
         })
         socket.on('message', messageRecebida => {
             mss.push(messageRecebida)
-            setMessagens([...mss.slice(0).reverse()])
+            setMessagens([...mss])
         })
 
     }, [idloggedUser])
@@ -77,10 +77,11 @@ export default function Login({ navigation }) {
             </View>
                 <View style={styles.lista}>
                     <FlatList
+                        ref={ ref => setFlat(ref)}
                         data={messagens}
-                        inverted
                         keyExtractor={post => String(post.message)}
-                        renderItem={({ item }) => (
+                        onContentSizeChange={() => flatlist.scrollToEnd({ animated: true})}
+                        renderItem={({ item }) => ( 
                             <View>
                                 {item.id === idloggedUser ? (
                                     <View style={styles.loggedUser}><View style={styles.messageE}><Text style={styles.text}>{loggedUser.user}</Text><Text style={styles.textN}>{item.message}</Text></View></View>

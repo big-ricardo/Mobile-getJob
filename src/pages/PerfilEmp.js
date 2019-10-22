@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react'
-import { SafeAreaView, StyleSheet, Image, Text, TouchableOpacity, View } from 'react-native'
+import { SafeAreaView, StyleSheet, Image, Text, TouchableOpacity, View, ScrollView } from 'react-native'
 
 import AsyncStorage from '@react-native-community/async-storage'
 import api from '../services/api'
 
-export default function Perfil({navigation}) {
+export default function Perfil({ navigation }) {
     const [email, setEmail] = useState('')
     const [user, setUser] = useState('')
     const [avatar, setAvatar] = useState('')
@@ -19,7 +19,7 @@ export default function Perfil({navigation}) {
         AsyncStorage.getItem('usernameEmp').then(username => {
             async function carregaUser() {
                 const senha = await AsyncStorage.getItem('senhaEmp')
-                const response = await api.post('/emps', { username, senha, type:true })
+                const response = await api.post('/emps', { username, senha, type: true })
                 const { email, user, avatar, cidade } = response.data
                 setUser(user)
                 setAvatar(avatar)
@@ -31,17 +31,17 @@ export default function Perfil({navigation}) {
     }, [])
 
     return (
-
-        <SafeAreaView style={styles.container}>
-            <Image style={styles.macthAvatar} source={{ uri: avatar }} />
-            <Text style={styles.macthName}>{user}</Text>
-            <Text style={styles.macthUser}>{email}</Text>
-            <Text style={styles.matchBio}>{cidade}</Text>
-            <View style={styles.saiir}>
-                <TouchableOpacity onPress={handleLogout} style={styles.button}><Text style={styles.buttonText}>Sair</Text></TouchableOpacity>
-            </View>
-        </SafeAreaView>
-
+        <ScrollView style={styles.scroll}>
+            <SafeAreaView style={styles.container}>
+                <Image style={styles.macthAvatar} source={{ uri: avatar }} />
+                <Text style={styles.macthName}>{user}</Text>
+                <Text style={styles.macthUser}>{email}</Text>
+                <Text style={styles.matchBio}>{cidade}</Text>
+                <View style={styles.saiir}>
+                    <TouchableOpacity onPress={handleLogout} style={styles.button}><Text style={styles.buttonText}>Sair</Text></TouchableOpacity>
+                </View>
+            </SafeAreaView>
+        </ScrollView>
     );
 }
 
@@ -53,6 +53,10 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-start',
         alignItems: 'center',
         padding: 30,
+    },
+
+    scroll:{
+        backgroundColor: '#f5f5f5',
     },
 
     macthAvatar: {
@@ -98,7 +102,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
 
-    saiir:{
+    saiir: {
         width: "80%",
         alignItems: 'center',
         justifyContent: 'flex-end'
