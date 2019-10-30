@@ -23,6 +23,7 @@ export default function Login({ navigation }) {
                     headers: { user: user }
                 })
                 setLogged(dev.data)
+
             }
             carregaUser()
         })
@@ -37,11 +38,19 @@ export default function Login({ navigation }) {
             }
             carregaUser()
         })
-
     }
 
     useEffect(() => {
         loadUsers()
+        async function loadMens(){
+            const idLg = await AsyncStorage.getItem('user')
+            const idTg = await AsyncStorage.getItem('vagId')
+            const mens = await api.get(`/mess/${idTg}`, {
+                headers: { user: idLg, op: 'dev' }
+            })
+            setMessagens(mens.data)
+        }
+        loadMens()
     }, [])
 
     async function handleSubmit(e) {
@@ -51,7 +60,7 @@ export default function Login({ navigation }) {
             id: idloggedUser,
             message,
         }, {
-            headers: { user: idloggedUser }
+            headers: { user: idloggedUser, op: 'dev'  }
         });
         setMessage("")
     }
@@ -61,6 +70,7 @@ export default function Login({ navigation }) {
             query: { user: idloggedUser }
         })
         socket.on('message', messageRecebida => {
+            setMessagens([])
             mss.push(messageRecebida)
             setMessagens([...mss])
         })

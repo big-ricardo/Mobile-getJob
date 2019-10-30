@@ -7,6 +7,7 @@ import Deslike from '../assets/dislike.png'
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import api from '../services/api'
 import matchImage from '../assets/itsamatch.png'
+import { NavigationEvents } from 'react-navigation'
 
 export default function Main({ navigation }) {
     const id = navigation.getParam('user')
@@ -71,7 +72,7 @@ export default function Main({ navigation }) {
 
     return (
         <SafeAreaView style={styles.container}>
-            <TouchableOpacity >
+            <TouchableOpacity onPress={() => navigation.navigate('Inicial')}>
                 <Image style={styles.logo} source={Logo}/>
             </TouchableOpacity>
             <View style={styles.cardContiner}>

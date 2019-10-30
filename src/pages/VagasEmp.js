@@ -52,7 +52,7 @@ export default function Main({ navigation }) {
 
     return (
         <SafeAreaView style={styles.container}>
-            <TouchableOpacity >
+            <TouchableOpacity  onPress={() => navigation.navigate('Inicial')}>
                 <Image style={styles.logo} source={Logo}/>
             </TouchableOpacity>
             <View style={{ width: '90%', marginBottom: 90}}>

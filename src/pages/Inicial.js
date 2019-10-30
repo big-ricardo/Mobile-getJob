@@ -6,7 +6,6 @@ import Comercial from '../assets/comercial.png'
 
 export default function Login({ navigation }) {
 
-
     function handlePessoal() {
         navigation.navigate('Login')
     }
