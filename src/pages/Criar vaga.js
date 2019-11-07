@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { KeyboardAvoidingView, StyleSheet, Image, TextInput, Text, TouchableOpacity, Platform } from 'react-native'
+import { KeyboardAvoidingView, StyleSheet, Image, TextInput, Text, TouchableOpacity, Platform, Alert } from 'react-native'
 import Logo from '../assets/logoGet.png'
 import api from '../services/api'
 import AsyncStorage from '@react-native-community/async-storage'
@@ -18,38 +18,49 @@ export default function Login({ navigation }) {
     }, [])
 
     async function handleSubmit() {
-        const response = await api.post('/vags', {
-            atuacao,
-            descricao,
-            id: idEmp,
-            cidade,
-            emailC
-        });
 
-        if(response){
-            setUsername('')
-            setPassword('')
-            setCiadade('')
-            setEmail('')
-            Alert.alert(
-                'Sucesso!',
-                'Vaga Criada com sucesso!',
-                [
-                    { text: 'OK', onPress: () => console.log('OK Pressed') },
-                ],
-                { cancelable: false },
-            );
+        if(atuacao !== "" && descricao !== "" && idEmp !== "" && cidade !== "" && emailC !== ""){
+            const response = await api.post('/vags', {
+                atuacao,
+                descricao,
+                id: idEmp,
+                cidade,
+                emailC
+            }); 
+    
+            if(response){
+                setUsername('')
+                setPassword('')
+                setCiadade('')
+                setEmail('')
+                Alert.alert(
+                    'Sucesso!',
+                    'Vaga Criada com sucesso!',
+                    [
+                        { text: 'OK', onPress: () => console.log('OK Pressed') },
+                    ],
+                    { cancelable: false },
+                );
+            }else{
+                Alert.alert(
+                    'Algo deu Errado',
+                    'Revise sua Conexão',
+                    [
+                        { text: 'OK', onPress: () => console.log('OK Pressed') },
+                    ],
+                    { cancelable: false },
+                );
+            }
         }else{
             Alert.alert(
                 'Algo deu Errado',
-                'Revise seu os Campos',
+                'Preencha todos os Campos',
                 [
                     { text: 'OK', onPress: () => console.log('OK Pressed') },
                 ],
                 { cancelable: false },
             );
         }
-        
     }
     return (
 
