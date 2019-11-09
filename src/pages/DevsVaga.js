@@ -56,8 +56,9 @@ export default function Main({ navigation }) {
     return (
         <SafeAreaView style={styles.container}>
             <TouchableOpacity >
-                <Image style={styles.logo} source={Logo}/>
+                <Image style={styles.logo} source={Logo} />
             </TouchableOpacity>
+
             <View style={styles.cardContiner}>
                 {users.length === 0
                     ? <Text style={styles.empty}>Acabou :(</Text>
@@ -112,17 +113,17 @@ const styles = StyleSheet.create({
         maxHeight: 500,
     },
 
-    text:{
+    text: {
         fontWeight: 'bold',
         fontSize: 16,
         color: "#333"
     },
 
-    textN:{
+    textN: {
         fontWeight: "700",
         color: '#666',
         fontSize: 15,
-        marginLeft:3,
+        marginLeft: 3,
         marginTop: 2,
     },
 
@@ -132,7 +133,7 @@ const styles = StyleSheet.create({
         marginLeft: 5,
     },
 
-    containerText:{
+    containerText: {
         flexDirection: 'row'
     },
 
@@ -149,7 +150,7 @@ const styles = StyleSheet.create({
         bottom: 0,
     },
 
-    matchImage:{
+    matchImage: {
         width: "100%",
     },
 

@@ -31,6 +31,7 @@ export default function Matchs({ navigation }) {
                 const response = await api.get(`/matchs?pg=1&vs=10`, {
                     headers: { user }
                 })
+                setPg(1)
                 setUsers(response.data)
                 console.log(response.data)
                 setRefresh(false)

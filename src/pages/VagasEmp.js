@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Image, SafeAreaView, Text, StyleSheet, View, FlatList } from 'react-native'
+import { Image, SafeAreaView, Text, StyleSheet, View, FlatList, Alert } from 'react-native'
 import Logo from '../assets/logoGet.png'
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import api from '../services/api'
@@ -16,6 +16,22 @@ export default function Main({ navigation }) {
         loadUsers();
     }, [id])
 
+    async function handleFechar(idVaga) {
+        Alert.alert(
+            'Cuidado!',
+            'Deseja tirar essa vaga dos Anúncios?',
+            [
+                { text: 'OK', onPress: () => atualizaFechados(idVaga)},
+                { text: 'Cancelar', onPress: () => console.log('Cancelado') }
+            ]
+        );
+    }
+
+    async function atualizaFechados(idVaga) {
+        await api.put(`/vags/${idVaga}`, null, { headers: { oi: 'oi' } })
+       recarregar()
+    }
+
     async function loadUsers() {
         const response = await api.get(`/emps?pg=${pagina}&vs=5`, {
             headers: { user: id }
@@ -27,8 +43,8 @@ export default function Main({ navigation }) {
     async function handleVaga(_id) {
 
         await AsyncStorage.setItem('vagaId', _id)
-        
-        navigation.navigate('infoVaga', { user: _id }) 
+
+        navigation.navigate('infoVaga', { user: _id })
     }
 
     async function recarregar() {
@@ -37,8 +53,8 @@ export default function Main({ navigation }) {
                 const response = await api.get(`/emps?pg=1&vs=5`, {
                     headers: { user }
                 })
+                setPg(1)
                 setUsers(response.data)
-                console.log(response.data)
                 setRefresh(false)
             }
             atualiza()
@@ -52,10 +68,10 @@ export default function Main({ navigation }) {
 
     return (
         <SafeAreaView style={styles.container}>
-            <TouchableOpacity  onPress={() => navigation.navigate('Inicial')}>
-                <Image style={styles.logo} source={Logo}/>
+            <TouchableOpacity onPress={() => navigation.navigate('Inicial')}>
+                <Image style={styles.logo} source={Logo} />
             </TouchableOpacity>
-            <View style={{ width: '90%', marginBottom: 90}}>
+            <View style={{ width: '90%', marginBottom: 90 }}>
                 <FlatList
                     data={users}
                     onEndReached={() => loadUsers()}
@@ -65,22 +81,29 @@ export default function Main({ navigation }) {
                     refreshing={refresh}
                     onRefresh={() => handleRefresh()}
                     renderItem={({ item }) => (
-                        <TouchableOpacity onPress={() => handleVaga(item._id)}>
-                            <View style={styles.conatinerVag}>
-                                <View>
-                                    <Image style={styles.image} source={{ uri: item.avatar }} />
-                                </View>
-                                <View>
-                                    <View style={styles.texto}>
-                                        <View style={styles.containerText}><Text style={styles.textN}>Empresa:</Text><Text style={styles.text}> {item.user}</Text></View>
-                                        <View style={styles.containerText}><Text style={styles.textN}>Vaga:</Text><Text style={styles.text}> {item.atuacao}</Text></View>
-                                        <View style={styles.containerText}><Text style={styles.textN}>Email:</Text><Text style={styles.text}> {item.emailContato}</Text></View>
-                                        <View style={styles.containerText}><Text style={styles.textN}>Cidade:</Text><Text style={styles.text}> {item.cidade}</Text></View>
+                        <View>
+                            <TouchableOpacity onPress={() => handleVaga(item._id)}>
+                                <View style={styles.conatinerVag}>
+                                    <View>
+                                        <Image style={styles.image} source={{ uri: item.avatar }} />
+                                    </View>
+                                    <View>
+                                        <View style={styles.texto}>
+                                            <View style={styles.containerText}><Text style={styles.textN}>Empresa:</Text><Text style={styles.text}> {item.user}</Text></View>
+                                            <View style={styles.containerText}><Text style={styles.textN}>Vaga:</Text><Text style={styles.text}> {item.atuacao}</Text></View>
+                                            <View style={styles.containerText}><Text style={styles.textN}>Email:</Text><Text style={styles.text}> {item.emailContato}</Text></View>
+                                            <View style={styles.containerText}><Text style={styles.textN}>Cidade:</Text><Text style={styles.text}> {item.cidade}</Text></View>
 
+                                        </View>
                                     </View>
                                 </View>
-                            </View>
-                        </TouchableOpacity>
+                            </TouchableOpacity>
+                            {item.aberto === true ? (
+                                <TouchableOpacity style={styles.fechar} onPress={() => handleFechar(item._id)}><Text style={styles.tex}>Fechar Vaga</Text></TouchableOpacity>
+                            ) : (
+                                    <View style={styles.fechar}><Text style={styles.textN}>Vaga Fechada</Text></View>
+                                )}
+                        </View>
                     )}
                 />
             </View>
@@ -93,8 +116,20 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#f5f5f5',
-        
         alignItems: 'center',
+    },
+
+    fechar: {
+        flex: 1,
+        backgroundColor: '#df4723',
+        borderBottomLeftRadius: 10,
+        borderBottomRightRadius: 10,
+        marginTop: -4,
+        alignItems: "center",
+        justifyContent: "center",
+        padding: 5,
+        borderWidth: 3,
+        marginBottom: 5
     },
 
     conatinerVag: {
@@ -129,6 +164,10 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         fontSize: 16,
         color: "#fff"
+    },
+
+    tex: {
+        color: '#f5f5f5',
     },
 
     textN: {

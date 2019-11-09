@@ -7,7 +7,6 @@ import Deslike from '../assets/dislike.png'
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import api from '../services/api'
 import matchImage from '../assets/itsamatch.png'
-import { NavigationEvents } from 'react-navigation'
 
 export default function Main({ navigation }) {
     const id = navigation.getParam('user')
