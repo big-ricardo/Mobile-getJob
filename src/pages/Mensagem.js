@@ -4,6 +4,7 @@ import Logo from '../assets/logoGet.png'
 import io from 'socket.io-client'
 import api from '../services/api'
 import AsyncStorage from '@react-native-community/async-storage'
+import ipNet from '../services/Config'
 
 export default function Login({ navigation }) {
     const [message, setMessage] = useState('')
@@ -56,23 +57,25 @@ export default function Login({ navigation }) {
     async function handleSubmit(e) {
         e.preventDefault()
 
-        const response = await api.post(`/mess/${idtargetUser}`, {
-            id: idloggedUser,
-            message,
-        }, {
-            headers: { user: idloggedUser, op: 'dev'  }
-        });
-        setMessage("")
+        if(message.messa !== ""){
+            const response = await api.post(`/mess/${idtargetUser}`, {
+                id: idloggedUser,
+                message,
+            }, {
+                headers: { user: idloggedUser, op: 'dev'  }
+            });
+            setMessage("")
+        }
     }
 
     useEffect(() => {
-        const socket = io('https://getjobserver.herokuapp.com', {
+        const socket = io(ipNet, {
             query: { user: idloggedUser }
         })
         socket.on('message', messageRecebida => {
-            setMessagens([])
+            setMessage([])
             mss.push(messageRecebida)
-            setMessagens([...mss])
+            setMessagens(mss)
         })
 
     }, [idloggedUser])
@@ -89,7 +92,7 @@ export default function Login({ navigation }) {
                     <FlatList
                         ref={ ref => setFlat(ref)}
                         data={messagens}
-                        keyExtractor={post => String(post.message)}
+                        keyExtractor={post => String(post.ind)}
                         onContentSizeChange={() => flatlist.scrollToEnd({ animated: true})}
                         renderItem={({ item }) => (
                             <View>

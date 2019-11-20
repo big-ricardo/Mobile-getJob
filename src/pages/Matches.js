@@ -12,6 +12,7 @@ export default function Matchs({ navigation }) {
     const [refresh, setRefresh] = useState(false);
 
     async function loadPage() {
+        setRefresh(true)
         AsyncStorage.getItem('user').then(user => {
             async function carregaUser() {
                 const response = await api.get(`/matchs?pg=${pagina}&vs=10`, {
@@ -19,6 +20,7 @@ export default function Matchs({ navigation }) {
                 })
                 setUsers([...users, ...response.data])
                 setPg(pagina + 1)
+                setRefresh(false)
             }
             carregaUser()
         })
@@ -31,10 +33,10 @@ export default function Matchs({ navigation }) {
                 const response = await api.get(`/matchs?pg=1&vs=10`, {
                     headers: { user }
                 })
-                setPg(1)
-                setUsers(response.data)
+                setPg(2)
                 console.log(response.data)
                 setRefresh(false)
+                setUsers(response.data)
             }
             atualiza()
         })

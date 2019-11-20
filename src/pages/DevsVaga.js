@@ -7,6 +7,7 @@ import Deslike from '../assets/dislike.png'
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import api from '../services/api'
 import matchImage from '../assets/itsamatch.png'
+import ipNet from '../services/Config'
 
 export default function Main({ navigation }) {
     const id = navigation.getParam('user')
@@ -24,7 +25,7 @@ export default function Main({ navigation }) {
     }, [id])
 
     useEffect(() => {
-        const socket = io('https://getjobserver.herokuapp.com', {
+        const socket = io(ipNet, {
             query: { user: id }
         })
 

@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react'
-import { SafeAreaView, StyleSheet, View,Image, TextInput, Text, TouchableOpacity, Platform, FlatList } from 'react-native'
+import { SafeAreaView, StyleSheet, View, Image, TextInput, Text, TouchableOpacity, Platform, FlatList } from 'react-native'
 import io from 'socket.io-client'
 import api from '../services/api'
 import AsyncStorage from '@react-native-community/async-storage'
+import ipNet from '../services/Config'
 
 export default function Login({ navigation }) {
     const [message, setMessage] = useState('')
@@ -11,7 +12,7 @@ export default function Login({ navigation }) {
     const [targetUser, setTarget] = useState({})
     const [idloggedUser, setIdLogged] = useState('')
     const [idtargetUser, setTIdarget] = useState('')
-    const [flatlist,setFlat] = useState(null)
+    const [flatlist, setFlat] = useState(null)
     let mss = []
 
     async function loadUsers() {
@@ -30,7 +31,7 @@ export default function Login({ navigation }) {
             setTIdarget(vaga)
             async function carregaUser() {
                 const emp = await api.get('/devLog', {
-                    headers: { user:vaga }
+                    headers: { user: vaga }
                 })
                 setTarget(emp.data)
             }
@@ -40,7 +41,7 @@ export default function Login({ navigation }) {
 
     useEffect(() => {
         loadUsers()
-        async function loadMens(){
+        async function loadMens() {
             const idLg = await AsyncStorage.getItem('vagaId')
             const idTg = await AsyncStorage.getItem('devId')
             const mens = await api.get(`/mess/${idTg}`, {
@@ -53,24 +54,25 @@ export default function Login({ navigation }) {
 
     async function handleSubmit(e) {
         e.preventDefault()
-
-        const response = await api.post(`/mess/${idtargetUser}`, {
-            id: idloggedUser,
-            message,
-        }, {
-            headers: { user: idloggedUser ,  op:'emp' }
-        });
-        setMessage("")
+        if (message.messa !== "") {
+            const response = await api.post(`/mess/${idtargetUser}`, {
+                id: idloggedUser,
+                message,
+            }, {
+                headers: { user: idloggedUser, op: 'emp' }
+            });
+            setMessage("")
+        }
     }
 
     useEffect(() => {
-        const socket = io('https://getjobserver.herokuapp.com', {
+        const socket = io(ipNet, {
             query: { user: idloggedUser }
         })
         socket.on('message', messageRecebida => {
             setMessagens([])
             mss.push(messageRecebida)
-            setMessagens([...mss])
+            setMessagens(mss)
         })
 
     }, [idloggedUser])
@@ -80,17 +82,17 @@ export default function Login({ navigation }) {
 
         <SafeAreaView style={styles.container} enabled={Platform.OS == 'ios'}>
             <View style={styles.message_container}>
-            <View style={styles.perfil}>
-                <Image style={styles.avatar} source={{ uri: targetUser.avatar }} />
-                <Text style={styles.name}>{targetUser.user}</Text>
-            </View>
+                <View style={styles.perfil}>
+                    <Image style={styles.avatar} source={{ uri: targetUser.avatar }} />
+                    <Text style={styles.name}>{targetUser.user}</Text>
+                </View>
                 <View style={styles.lista}>
                     <FlatList
-                        ref={ ref => setFlat(ref)}
+                        ref={ref => setFlat(ref)}
                         data={messagens}
-                        keyExtractor={post => String(post.message)}
-                        onContentSizeChange={() => flatlist.scrollToEnd({ animated: true})}
-                        renderItem={({ item }) => ( 
+                        keyExtractor={post => String(post.ind)}
+                        onContentSizeChange={() => flatlist.scrollToEnd({ animated: true })}
+                        renderItem={({ item }) => (
                             <View>
                                 {item.id === idloggedUser ? (
                                     <View style={styles.loggedUser}><View style={styles.messageE}><Text style={styles.text}>{loggedUser.user}</Text><Text style={styles.textN}>{item.message}</Text></View></View>
@@ -129,7 +131,7 @@ const styles = StyleSheet.create({
         marginBottom: 3
     },
 
-    lista:{
+    lista: {
         position: 'absolute',
         top: 61,
         bottom: 0,

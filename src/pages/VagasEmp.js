@@ -29,15 +29,28 @@ export default function Main({ navigation }) {
 
     async function atualizaFechados(idVaga) {
         await api.put(`/vags/${idVaga}`, null, { headers: { oi: 'oi' } })
-       recarregar()
+        setRefresh(true)
+        AsyncStorage.getItem('userEmp').then(user => {
+            async function atualiza() {
+                const response = await api.get(`/emps`, {
+                    headers: { user }
+                })
+                setPg(20)
+                setUsers(response.data)
+                setRefresh(false)
+            }
+            atualiza()
+        })
     }
 
     async function loadUsers() {
+        setRefresh(true)
         const response = await api.get(`/emps?pg=${pagina}&vs=5`, {
             headers: { user: id }
         })
         setUsers([...users, ...response.data])
         setPg(pagina + 1)
+        setRefresh(false)
     }
 
     async function handleVaga(_id) {
@@ -48,12 +61,13 @@ export default function Main({ navigation }) {
     }
 
     async function recarregar() {
+        setRefresh(true)
         AsyncStorage.getItem('userEmp').then(user => {
             async function atualiza() {
                 const response = await api.get(`/emps?pg=1&vs=5`, {
                     headers: { user }
                 })
-                setPg(1)
+                setPg(2)
                 setUsers(response.data)
                 setRefresh(false)
             }
